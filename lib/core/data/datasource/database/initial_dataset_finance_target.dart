@@ -6,6 +6,9 @@ final initialFinanceTarget = [
     label: 'Férias na Europa',
     targetValue: 12000,
     currentValue: 3500,
+    desiredDeposit: 500,
+    recurrencyDays: 30,
+    typeId: 8,
     dueDate: DateTime(2026, 7, 1),
   ),
   FinanceTargetModel(
@@ -13,6 +16,9 @@ final initialFinanceTarget = [
     label: 'Comprar notebook',
     targetValue: 8000,
     currentValue: 2000,
+    desiredDeposit: 400,
+    recurrencyDays: 15,
+    typeId: 9,
     dueDate: DateTime(2026, 3, 15),
   ),
   FinanceTargetModel(
@@ -20,6 +26,9 @@ final initialFinanceTarget = [
     label: 'Fundo de emergência',
     targetValue: 15000,
     currentValue: 9000,
+    desiredDeposit: 300,
+    recurrencyDays: 30,
+    typeId: 10,
     dueDate: null,
   ),
   FinanceTargetModel(
@@ -27,6 +36,9 @@ final initialFinanceTarget = [
     label: 'Curso de Flutter',
     targetValue: 2000,
     currentValue: 500,
+    desiredDeposit: 250,
+    recurrencyDays: 7,
+    typeId: 11,
     dueDate: DateTime(2026, 2, 28),
   ),
   FinanceTargetModel(
@@ -34,6 +46,9 @@ final initialFinanceTarget = [
     label: 'Compra do carro',
     targetValue: 40000,
     currentValue: 10000,
+    desiredDeposit: 1000,
+    recurrencyDays: 30,
+    typeId: 12,
     dueDate: DateTime(2027, 12, 31),
   ),
 ];

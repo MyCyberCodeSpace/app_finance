@@ -19,6 +19,7 @@ import 'package:finance_control/core/presentation/bloc/finance_type/finance_type
 import 'package:finance_control/core/presentation/controllers/finance_record_controller.dart';
 import 'package:finance_control/core/presentation/controllers/finance_shared_preferences_controller.dart';
 import 'package:finance_control/core/presentation/controllers/finance_type_controller.dart';
+import 'package:finance_control/features/dashboard/controller/dashboard_controller.dart';
 import 'package:finance_control/features/dashboard/dashboard_module.dart';
 import 'package:finance_control/features/record/record_module.dart';
 import 'package:finance_control/features/saving/presentation/bloc/finance_savings_bloc.dart';
@@ -62,6 +63,7 @@ class AppModule extends Module {
     i.addLazySingleton(FinanceTargetBloc.new);
     i.addLazySingleton(FinanceRecordController.new);
     i.addLazySingleton(FinanceTypeController.new);
+    i.addLazySingleton(DashboardController.new);
   }
 
   @override

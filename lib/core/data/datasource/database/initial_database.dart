@@ -92,9 +92,13 @@ class InitialDatabase {
           label TEXT NOT NULL,
           target_value REAL NOT NULL,
           current_value REAL NOT NULL,
+          desired_deposit REAL NOT NULL,
+          recurrency_days INTEGER NOT NULL,
+          type_id INTEGER NOT NULL,
           due_date TEXT,
           created_at TEXT NOT NULL,
-          updated_at TEXT
+          updated_at TEXT,
+          FOREIGN KEY (type_id) REFERENCES finance_types (id)
         );
         ''');
         

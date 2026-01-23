@@ -29,9 +29,15 @@ class _DashboardPageState extends State<DashboardPage> {
     super.initState();
     financeRecordController = Modular.get<FinanceRecordController>();
     dashboardController = Modular.get<DashboardController>();
-    dashboardController.financeRecordBloc.add(
-      LoadFinanceRecordsEvent(),
-    );
+
+    if (dashboardController.selectedFinanceType.value.isEmpty &&
+        dashboardController.selectedFinanceCategory.value.isEmpty &&
+        dashboardController.startDateTEC.text.isEmpty &&
+        dashboardController.endDateTEC.text.isEmpty) {
+      dashboardController.financeRecordBloc.add(
+        LoadFinanceRecordsEvent(),
+      );
+    }
   }
 
   @override
@@ -57,9 +63,7 @@ class _DashboardPageState extends State<DashboardPage> {
         },
         builder: (context, state) {
           if (state is FinanceRecordLoadingState) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (state is FinanceRecordErrorState) {
@@ -131,26 +135,33 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ),
                 SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final item = state.records[index];
-                      return FinanceRecordTile(
-                        record: item.record,
-                        type: item.type,
-                      );
-                    },
-                    childCount: state.records.length,
-                  ),
+                  delegate: SliverChildBuilderDelegate((
+                    context,
+                    index,
+                  ) {
+                    final item = state.records[index];
+                    return FinanceRecordTile(
+                      record: item.record,
+                      type: item.type,
+                    );
+                  }, childCount: state.records.length),
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 24, 16, 150),
+                    padding: const EdgeInsets.fromLTRB(
+                      16,
+                      24,
+                      16,
+                      150,
+                    ),
                     child: Center(
                       child: OutlinedButton.icon(
                         onPressed: () {
                           _scrollController.animateTo(
                             0,
-                            duration: const Duration(milliseconds: 500),
+                            duration: const Duration(
+                              milliseconds: 500,
+                            ),
                             curve: Curves.easeInOut,
                           );
                         },
@@ -201,10 +212,7 @@ class _DashboardPageState extends State<DashboardPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.gray.shade200,
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.gray.shade200, width: 1),
         boxShadow: [
           BoxShadow(
             color: AppColors.gray.shade100,
@@ -276,10 +284,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              icon: const Icon(
-                Icons.tune_rounded,
-                size: 18,
-              ),
+              icon: const Icon(Icons.tune_rounded, size: 18),
               label: const Text(
                 'Selecionar',
                 style: TextStyle(

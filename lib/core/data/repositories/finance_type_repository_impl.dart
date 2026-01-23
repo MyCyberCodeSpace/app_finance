@@ -57,16 +57,30 @@ class FinanceTypeRepositoryImpl implements FinanceTypeRepository {
     }
 
     if (model.isActive == false) {
-      final result = await db.query(
+      // Verifica se há registros vinculados
+      final recordsResult = await db.query(
         'finance_records',
         where: 'type_id = ?',
         whereArgs: [model.id],
         limit: 1,
       );
 
-      if (result.isNotEmpty) {
+      if (recordsResult.isNotEmpty) {
         throw Exception(
           'Não é possível desativar este tipo: existem registros vinculados.',
+        );
+      }
+
+      final targetsResult = await db.query(
+        'finance_target',
+        where: 'type_id = ?',
+        whereArgs: [model.id],
+        limit: 1,
+      );
+
+      if (targetsResult.isNotEmpty) {
+        throw Exception(
+          'Não é possível desativar este tipo: existem metas financeiras vinculadas.',
         );
       }
     }
@@ -83,16 +97,30 @@ class FinanceTypeRepositoryImpl implements FinanceTypeRepository {
   Future<void> delete(int id) async {
     final db = await database.database;
 
-    final result = await db.query(
+    final recordsResult = await db.query(
       'finance_records',
       where: 'type_id = ?',
       whereArgs: [id],
       limit: 1,
     );
 
-    if (result.isNotEmpty) {
+    if (recordsResult.isNotEmpty) {
       throw Exception(
         'Não é possível excluir o tipo: existem registros vinculados.',
+      );
+    }
+
+    // Verifica se há metas financeiras vinculadas
+    final targetsResult = await db.query(
+      'finance_target',
+      where: 'type_id = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+
+    if (targetsResult.isNotEmpty) {
+      throw Exception(
+        'Não é possível excluir o tipo: existem metas financeiras vinculadas.',
       );
     }
 

@@ -125,4 +125,19 @@ class DashboardController extends ChangeNotifier {
     selectedFinanceType.value = [];
     financeRecordBloc.add(LoadFinanceRecordsEvent());
   }
+
+  void applyFilterByType(FinanceTypeModel financeType) {
+    startDateTEC.clear();
+    endDateTEC.clear();
+    selectedFinanceCategory.value = [];
+    selectedFinanceType.value = [financeType];
+    
+    financeRecordBloc.add(
+      LoadFinanceRecordsEvent(
+        params: FinanceRecordParams(
+          financeType: [financeType],
+        ),
+      ),
+    );
+  }
 }
