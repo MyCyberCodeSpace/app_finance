@@ -23,7 +23,6 @@ class CustomScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
       appBar: mainAppBar(
         context: context,
         text: text,
@@ -34,7 +33,7 @@ class CustomScaffold extends StatelessWidget {
         selectedPageIndex: selectedPageIndex,
       ),
       body: Padding(
-        padding: const EdgeInsets.only(bottom: 80),
+        padding: const EdgeInsets.only(bottom: 20),
         child: body,
       ),
       floatingActionButton: FloatingActionButton(
