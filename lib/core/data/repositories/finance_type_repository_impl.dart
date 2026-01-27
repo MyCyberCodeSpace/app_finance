@@ -70,19 +70,6 @@ class FinanceTypeRepositoryImpl implements FinanceTypeRepository {
           'Não é possível desativar este tipo: existem registros vinculados.',
         );
       }
-
-      final targetsResult = await db.query(
-        'finance_target',
-        where: 'type_id = ?',
-        whereArgs: [model.id],
-        limit: 1,
-      );
-
-      if (targetsResult.isNotEmpty) {
-        throw Exception(
-          'Não é possível desativar este tipo: existem metas financeiras vinculadas.',
-        );
-      }
     }
 
     await db.update(
@@ -107,20 +94,6 @@ class FinanceTypeRepositoryImpl implements FinanceTypeRepository {
     if (recordsResult.isNotEmpty) {
       throw Exception(
         'Não é possível excluir o tipo: existem registros vinculados.',
-      );
-    }
-
-    // Verifica se há metas financeiras vinculadas
-    final targetsResult = await db.query(
-      'finance_target',
-      where: 'type_id = ?',
-      whereArgs: [id],
-      limit: 1,
-    );
-
-    if (targetsResult.isNotEmpty) {
-      throw Exception(
-        'Não é possível excluir o tipo: existem metas financeiras vinculadas.',
       );
     }
 

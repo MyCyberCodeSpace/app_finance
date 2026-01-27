@@ -5,7 +5,6 @@ class FinanceTargetModel {
   final double currentValue;
   final double desiredDeposit;
   final int recurrencyDays;
-  final int typeId;
   final DateTime? dueDate;
   final DateTime createdAt;
   final DateTime? updatedAt;
@@ -17,7 +16,6 @@ class FinanceTargetModel {
     this.currentValue = 0,
     required this.desiredDeposit,
     required this.recurrencyDays,
-    required this.typeId,
     this.dueDate,
     DateTime? createdAt,
     this.updatedAt,
@@ -31,7 +29,6 @@ class FinanceTargetModel {
       'current_value': currentValue,
       'desired_deposit': desiredDeposit,
       'recurrency_days': recurrencyDays,
-      'type_id': typeId,
       'due_date': dueDate?.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
@@ -46,7 +43,6 @@ class FinanceTargetModel {
       currentValue: map['current_value'] ?? 0,
       desiredDeposit: map['desired_deposit'],
       recurrencyDays: map['recurrency_days'],
-      typeId: map['type_id'],
       dueDate: map['due_date'] != null ? DateTime.parse(map['due_date']) : null,
       createdAt: DateTime.parse(map['created_at']),
       updatedAt: map['updated_at'] != null ? DateTime.parse(map['updated_at']) : null,
@@ -60,7 +56,6 @@ class FinanceTargetModel {
     double? currentValue,
     double? desiredDeposit,
     int? recurrencyDays,
-    int? typeId,
     DateTime? dueDate,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -72,7 +67,6 @@ class FinanceTargetModel {
       currentValue: currentValue ?? this.currentValue,
       desiredDeposit: desiredDeposit ?? this.desiredDeposit,
       recurrencyDays: recurrencyDays ?? this.recurrencyDays,
-      typeId: typeId ?? this.typeId,
       dueDate: dueDate ?? this.dueDate,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

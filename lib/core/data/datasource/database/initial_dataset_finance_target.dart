@@ -8,7 +8,6 @@ final initialFinanceTarget = [
     currentValue: 3500,
     desiredDeposit: 500,
     recurrencyDays: 30,
-    typeId: 8,
     dueDate: DateTime(2026, 7, 1),
   ),
   FinanceTargetModel(
@@ -18,7 +17,6 @@ final initialFinanceTarget = [
     currentValue: 2000,
     desiredDeposit: 400,
     recurrencyDays: 15,
-    typeId: 9,
     dueDate: DateTime(2026, 3, 15),
   ),
   FinanceTargetModel(
@@ -28,7 +26,6 @@ final initialFinanceTarget = [
     currentValue: 9000,
     desiredDeposit: 300,
     recurrencyDays: 30,
-    typeId: 10,
     dueDate: null,
   ),
   FinanceTargetModel(
@@ -38,7 +35,6 @@ final initialFinanceTarget = [
     currentValue: 500,
     desiredDeposit: 250,
     recurrencyDays: 7,
-    typeId: 11,
     dueDate: DateTime(2026, 2, 28),
   ),
   FinanceTargetModel(
@@ -48,7 +44,6 @@ final initialFinanceTarget = [
     currentValue: 10000,
     desiredDeposit: 1000,
     recurrencyDays: 30,
-    typeId: 12,
     dueDate: DateTime(2027, 12, 31),
   ),
 ];

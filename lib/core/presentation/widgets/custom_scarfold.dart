@@ -41,7 +41,6 @@ class CustomScaffold extends StatelessWidget {
         shape: const CircleBorder(),
         backgroundColor: AppColors.backgroundColorBlack,
         onPressed: onPressedFloatingActionButton,
-
         child: Icon(Icons.add, size: 24, color: Colors.white),
       ),
       floatingActionButtonLocation:

@@ -78,11 +78,25 @@ class InitialDatabase {
         ''');
 
         await db.execute('''
-        CREATE TABLE finance_savings (
+        CREATE TABLE finance_saving (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           label TEXT NOT NULL,
           total_saving REAL NOT NULL,
           updated_at TEXT NOT NULL
+        )
+        ''');
+
+        await db.execute('''
+        CREATE TABLE finance_saving_movements (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          saving_id INTEGER NOT NULL,
+          type TEXT NOT NULL,
+          value REAL NOT NULL,
+          description TEXT,
+          date TEXT NOT NULL,
+          created_at TEXT NOT NULL,
+          updated_at TEXT,
+          FOREIGN KEY (saving_id) REFERENCES finance_saving (id)
         )
         ''');
 
@@ -94,12 +108,10 @@ class InitialDatabase {
           current_value REAL NOT NULL,
           desired_deposit REAL NOT NULL,
           recurrency_days INTEGER NOT NULL,
-          type_id INTEGER NOT NULL,
           due_date TEXT,
           created_at TEXT NOT NULL,
-          updated_at TEXT,
-          FOREIGN KEY (type_id) REFERENCES finance_types (id)
-        );
+          updated_at TEXT
+        )
         ''');
         
         for (final payment in initialFinancePaymentTypes) {
@@ -119,7 +131,7 @@ class InitialDatabase {
         }
 
         for (final saving in initialDatasetFinanceSavings) {
-          await db.insert('finance_savings', saving.toMap());
+          await db.insert('finance_saving', saving.toMap());
         }
 
         for (final target in initialFinanceTarget) {

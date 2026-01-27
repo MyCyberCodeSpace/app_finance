@@ -1,7 +1,5 @@
 import 'package:finance_control/core/model/finance_target_model.dart';
-import 'package:finance_control/core/domain/repositories/finance_type_repository.dart';
 import 'package:finance_control/core/theme/app_colors.dart';
-import 'package:finance_control/features/dashboard/controller/dashboard_controller.dart';
 import 'package:finance_control/features/target/presentation/bloc/finance_target_bloc.dart';
 import 'package:finance_control/features/target/presentation/bloc/finance_target_bloc_event.dart';
 import 'package:flutter/material.dart';
@@ -104,7 +102,6 @@ class _TargetFormPageState extends State<TargetFormPage> {
       currentValue: currentValue,
       desiredDeposit: desiredDeposit,
       recurrencyDays: recurrencyDays,
-      typeId: widget.target?.typeId ?? 0,
       dueDate: _dueDate,
       createdAt: widget.target?.createdAt,
       updatedAt: widget.target != null ? DateTime.now() : null,
@@ -119,30 +116,7 @@ class _TargetFormPageState extends State<TargetFormPage> {
     Modular.to.pop();
   }
 
-  Future<void> _navigateToDepositsHistory() async {
-    if (widget.target?.typeId == null) return;
 
-    try {
-      final financeTypeRepository = Modular.get<FinanceTypeRepository>();
-      final financeType = await financeTypeRepository.getById(widget.target!.typeId);
-
-      final dashboardController = Modular.get<DashboardController>();
-      dashboardController.applyFilterByType(financeType);
-      
-      if (mounted) {
-        Modular.to.navigate('/');
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erro ao carregar histórico: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
 
   Map<String, dynamic>? _calculateProgress() {
     final targetValue = double.tryParse(
@@ -793,40 +767,6 @@ class _TargetFormPageState extends State<TargetFormPage> {
               ),
 
               const SizedBox(height: 24),
-              
-              if (isEdit && widget.target?.typeId != null) ...[
-                OutlinedButton(
-                  onPressed: () {
-                    _navigateToDepositsHistory();
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.blue,
-                    side: BorderSide(color: AppColors.blue, width: 2),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.history_rounded,
-                        size: 22,
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Ver Histórico de Depósitos',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
               
               ElevatedButton(
                 onPressed: _submit,

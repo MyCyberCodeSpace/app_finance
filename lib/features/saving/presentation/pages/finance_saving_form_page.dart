@@ -1,10 +1,15 @@
 import 'package:finance_control/core/model/finance_savings_model.dart';
+import 'package:finance_control/core/presentation/widgets/adjust_balance_dialog_widget.dart';
 import 'package:finance_control/core/theme/app_colors.dart';
 import 'package:finance_control/features/saving/presentation/bloc/finance_savings_bloc.dart';
 import 'package:finance_control/features/saving/presentation/bloc/finance_savings_bloc_event.dart';
+import 'package:finance_control/features/saving/presentation/controller/finance_saving_form_controller.dart';
+import 'package:finance_control/features/saving/presentation/widgets/finance_movement_form_widget.dart';
+import 'package:finance_control/features/saving/presentation/widgets/finance_saving_header_widget.dart';
+import 'package:finance_control/features/saving/presentation/widgets/finance_saving_info_card_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:intl/intl.dart';
 
 class FinanceSavingFormPage extends StatefulWidget {
   final FinanceSavingsModel? saving;
@@ -19,19 +24,20 @@ class FinanceSavingFormPage extends StatefulWidget {
 class _FinanceSavingFormPageState
     extends State<FinanceSavingFormPage> {
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _labelController;
-  late final TextEditingController _valueController;
+  final _movementFormKey = GlobalKey<FormState>();
+  late final FinanceSavingFormController _controller;
   late final FinanceSavingsBloc _bloc;
 
   @override
   void initState() {
     super.initState();
     _bloc = Modular.get<FinanceSavingsBloc>();
-    _labelController = TextEditingController(
-      text: widget.saving?.label ?? '',
+    _controller = FinanceSavingFormController(
+      savingsRepository: Modular.get(),
     );
-    _valueController = TextEditingController(
-      text: widget.saving != null
+    _controller.initializeControllers(
+      initialLabel: widget.saving?.label ?? '',
+      initialValue: widget.saving != null
           ? widget.saving!.value.toStringAsFixed(2)
           : '',
     );
@@ -39,20 +45,19 @@ class _FinanceSavingFormPageState
 
   @override
   void dispose() {
-    _labelController.dispose();
-    _valueController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
       final value = double.tryParse(
-        _valueController.text.replaceAll(',', '.'),
+        _controller.valueController.text.replaceAll(',', '.'),
       );
       if (value != null) {
         final savings = FinanceSavingsModel(
           id: widget.saving?.id,
-          label: _labelController.text,
+          label: _controller.labelController.text,
           value: value,
         );
 
@@ -63,6 +68,89 @@ class _FinanceSavingFormPageState
         }
 
         Modular.to.pop();
+      }
+    }
+  }
+
+  Future<void> _selectMovementDate(BuildContext context) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _controller.selectedMovementDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _controller.selectedMovementDate = picked;
+        _controller.movementDateController.text = DateFormat(
+          'dd/MM/yyyy',
+        ).format(picked);
+      });
+    }
+  }
+
+  void _showAdjustBalanceDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => AdjustBalanceDialog(
+        currentBalance: double.tryParse(
+              _controller.valueController.text.replaceAll(',', '.'),
+            ) ??
+            0.0,
+        title: 'Ajustar Saldo',
+        subtitle: 'Informe o novo valor economizado',
+        accentColor: AppColors.positiveBalance,
+        onConfirm: (value) {
+          setState(() {
+            _controller.valueController.text = value.toStringAsFixed(2);
+          });
+        },
+      ),
+    );
+  }
+
+  void _submitMovement() async {
+    if (widget.saving == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Salve a poupança antes de adicionar movimentações',
+          ),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    if (_movementFormKey.currentState!.validate() &&
+        _controller.selectedMovementDate != null &&
+        _controller.selectedMovementType != null) {
+      try {
+        final result = await _controller.addMovement(
+          widget.saving!.id!,
+        );
+
+        if (result) {
+          setState(() {});
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Movimentação registrada com sucesso!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao registrar movimentação: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     }
   }
@@ -92,210 +180,24 @@ class _FinanceSavingFormPageState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.positiveBalance,
-                      AppColors.positiveBalance.withValues(
-                        alpha: 0.8,
-                      ),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.positiveBalance.withValues(
-                        alpha: 0.3,
-                      ),
-                      blurRadius: 15,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        isEdit
-                            ? Icons.edit_rounded
-                            : Icons.savings_rounded,
-                        color: Colors.white,
-                        size: 32,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            isEdit
-                                ? 'Atualizar Economia'
-                                : 'Criar Nova Economia',
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            isEdit
-                                ? 'Atualize os dados da sua economia'
-                                : 'Registre suas reservas financeiras',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              FinanceSavingHeaderWidget(isEdit: isEdit),
 
               const SizedBox(height: 24),
-
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: AppColors.gray.shade200,
-                    width: 1.5,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.gray.shade300.withValues(
-                        alpha: 0.5,
-                      ),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.label_outline,
-                          size: 20,
-                          color: AppColors.gray.shade600,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Descrição',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.gray.shade700,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _labelController,
-                      decoration: InputDecoration(
-                        hintText:
-                            'Ex: Reserva de emergência, Fundo de viagem...',
-                        filled: true,
-                        fillColor: AppColors.gray.shade100,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                      ),
-                      validator: (v) => v == null || v.trim().isEmpty
-                          ? 'Informe a descrição'
-                          : null,
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.account_balance_wallet_outlined,
-                          size: 20,
-                          color: AppColors.positiveBalance,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Valor Economizado',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.gray.shade700,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _valueController,
-                      keyboardType:
-                          const TextInputType.numberWithOptions(
-                            decimal: true,
-                          ),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'^\d*\.?\d*'),
-                        ),
-                      ],
-                      decoration: InputDecoration(
-                        hintText: '0.00',
-                        prefixText: 'R\$ ',
-                        prefixStyle: TextStyle(
-                          color: AppColors.positiveBalance,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                        filled: true,
-                        fillColor: AppColors.positiveBalance
-                            .withValues(alpha: 0.05),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                      ),
-                      validator: (v) {
-                        if (v == null || v.trim().isEmpty) {
-                          return 'Informe o valor';
-                        }
-                        final value = double.tryParse(
-                          v.replaceAll(',', '.'),
-                        );
-                        if (value == null || value <= 0) {
-                          return 'Informe um valor válido';
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
-                ),
+              FinanceSavingInfoCardWidget(
+                controller: _controller,
+                onAdjustBalance: () => _showAdjustBalanceDialog(context),
               ),
-
               const SizedBox(height: 24),
+
+              if (isEdit) ...[
+                FinanceMovementFormWidget(
+                  controller: _controller,
+                  formKey: _movementFormKey,
+                  onSelectDate: () => _selectMovementDate(context),
+                  onSubmit: _submitMovement,
+                ),
+                const SizedBox(height: 24),
+              ],
 
               ElevatedButton(
                 onPressed: _submit,
@@ -330,6 +232,8 @@ class _FinanceSavingFormPageState
                   ],
                 ),
               ),
+
+              const SizedBox(height: 24),
             ],
           ),
         ),
