@@ -2,28 +2,32 @@ import 'package:finance_control/features/target/domain/model/finance_target_mode
 import 'package:finance_control/core/theme/app_colors.dart';
 import 'package:finance_control/features/target/presentation/bloc/finance_target_bloc.dart';
 import 'package:finance_control/features/target/presentation/bloc/finance_target_bloc_event.dart';
+import 'package:finance_control/features/target/presentation/controller/finance_target_form_controller.dart';
+import 'package:finance_control/features/target/presentation/widgets/finance_target_movement_form_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:intl/intl.dart';
 
-class TargetFormPage extends StatefulWidget {
+class FinanceTargetFormPage extends StatefulWidget {
   final FinanceTargetModel? target;
 
-  const TargetFormPage({super.key, this.target});
+  const FinanceTargetFormPage({super.key, this.target});
 
   @override
-  State<TargetFormPage> createState() => _TargetFormPageState();
+  State<FinanceTargetFormPage> createState() => _FinanceTargetFormPageState();
 }
 
-class _TargetFormPageState extends State<TargetFormPage> {
+class _FinanceTargetFormPageState extends State<FinanceTargetFormPage> {
   final _formKey = GlobalKey<FormState>();
+  final _movementFormKey = GlobalKey<FormState>();
   late final TextEditingController _labelController;
   late final TextEditingController _targetValueController;
   late final TextEditingController _currentValueController;
   late final TextEditingController _desiredDepositController;
   late final TextEditingController _recurrencyDaysController;
   late final TextEditingController _dueDateController;
+  late final FinanceTargetFormController _controller;
   late final FinanceTargetBloc financeTargetBloc;
   DateTime? _dueDate;
 
@@ -31,6 +35,7 @@ class _TargetFormPageState extends State<TargetFormPage> {
   void initState() {
     super.initState();
     financeTargetBloc = Modular.get<FinanceTargetBloc>();
+    _controller = FinanceTargetFormController(targetRepository: Modular.get());
     
     final target = widget.target;
     _labelController = TextEditingController(text: target?.label ?? '');
@@ -45,6 +50,13 @@ class _TargetFormPageState extends State<TargetFormPage> {
     );
     _recurrencyDaysController = TextEditingController(
       text: target?.recurrencyDays.toString() ?? '',
+    );
+    _controller.initializeControllers(
+      initialLabel: target?.label ?? '',
+      initialTargetValue: target?.targetValue.toString() ?? '',
+      initialCurrentValue: target?.currentValue.toString() ?? '',
+      initialDesiredDeposit: target?.desiredDeposit.toString() ?? '',
+      initialRecurrencyDays: target?.recurrencyDays.toString() ?? '',
     );
     _dueDate = target?.dueDate;
     _dueDateController = TextEditingController(
@@ -62,6 +74,7 @@ class _TargetFormPageState extends State<TargetFormPage> {
     _desiredDepositController.dispose();
     _recurrencyDaysController.dispose();
     _dueDateController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -78,6 +91,63 @@ class _TargetFormPageState extends State<TargetFormPage> {
         _dueDate = picked;
         _dueDateController.text = DateFormat('dd/MM/yyyy').format(picked);
       });
+    }
+  }
+
+  Future<void> _selectMovementDate(BuildContext context) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _controller.selectedMovementDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _controller.setMovementDate(picked);
+        _controller.movementDateController.text = DateFormat('dd/MM/yyyy').format(picked);
+      });
+    }
+  }
+
+  void _submitMovement() async {
+    if (widget.target == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Salve a meta antes de adicionar movimentações'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    if (_movementFormKey.currentState!.validate() &&
+        _controller.selectedMovementDate != null &&
+        _controller.selectedMovementType != null) {
+      try {
+        final result = await _controller.addMovement(widget.target!.id!);
+
+        if (result) {
+          setState(() {});
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Movimentação registrada com sucesso!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao registrar movimentação: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -767,7 +837,17 @@ class _TargetFormPageState extends State<TargetFormPage> {
               ),
 
               const SizedBox(height: 24),
-              
+
+              if (isEdit) ...[
+                FinanceTargetMovementFormWidget(
+                  controller: _controller,
+                  formKey: _movementFormKey,
+                  onSelectDate: () => _selectMovementDate(context),
+                  onSubmit: _submitMovement,
+                ),
+                const SizedBox(height: 24),
+              ],
+
               ElevatedButton(
                 onPressed: _submit,
                 style: ElevatedButton.styleFrom(

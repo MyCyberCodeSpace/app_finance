@@ -164,7 +164,7 @@ class _FinanceTargetListPageState
                       borderRadius: BorderRadius.circular(16),
                       onTap: () {
                         Modular.to.pushNamed(
-                          '/target/form',
+                          '/target/history',
                           arguments: target,
                         );
                       },

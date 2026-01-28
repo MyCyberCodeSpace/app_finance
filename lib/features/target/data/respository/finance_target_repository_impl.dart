@@ -1,6 +1,7 @@
 import 'package:finance_control/core/data/datasource/database/initial_database.dart';
 import 'package:finance_control/features/target/domain/repository/finance_target_repository.dart';
 import 'package:finance_control/features/target/domain/model/finance_target_model.dart';
+import 'package:finance_control/features/target/domain/model/finance_target_movement_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class FinanceTargetRepositoryImpl implements FinanceTargetRepository {
@@ -77,5 +78,82 @@ class FinanceTargetRepositoryImpl implements FinanceTargetRepository {
     return value is int
         ? value.toDouble()
         : (value as double? ?? 0.0);
+  }
+
+  @override
+  Future<int> addMovement(FinanceTargetMovementModel movement) async {
+    final db = await database.database;
+
+    final movementId = await db.insert(
+      'finance_target_movements',
+      movement.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+
+    return movementId;
+  }
+
+  @override
+  Future<List<FinanceTargetMovementModel>> getMovementsByTargetId(int targetId) async {
+    final db = await database.database;
+
+    final result = await db.query(
+      'finance_target_movements',
+      where: 'target_id = ?',
+      whereArgs: [targetId],
+      orderBy: 'date DESC',
+    );
+
+    return result.map(FinanceTargetMovementModel.fromMap).toList();
+  }
+
+  @override
+  Future<void> updateMovement(FinanceTargetMovementModel movement) async {
+    final db = await database.database;
+
+    if (movement.id == null) {
+      throw Exception('Movement id cannot be null on update');
+    }
+
+    await db.update(
+      'finance_target_movements',
+      {
+        ...movement.toMap(),
+        'updated_at': DateTime.now().toIso8601String(),
+      },
+      where: 'id = ?',
+      whereArgs: [movement.id],
+    );
+  }
+
+  @override
+  Future<void> deleteMovement(int movementId) async {
+    final db = await database.database;
+
+    await db.delete(
+      'finance_target_movements',
+      where: 'id = ?',
+      whereArgs: [movementId],
+    );
+  }
+
+  @override
+  Future<double> getTotalMovementsByTargetId(int targetId) async {
+    final db = await database.database;
+
+    final entradas = await db.rawQuery(
+      'SELECT COALESCE(SUM(value), 0.0) as total FROM finance_target_movements WHERE target_id = ? AND type = ?',
+      [targetId, 'entrada'],
+    );
+
+    final saidas = await db.rawQuery(
+      'SELECT COALESCE(SUM(value), 0.0) as total FROM finance_target_movements WHERE target_id = ? AND type = ?',
+      [targetId, 'saida'],
+    );
+
+    final totalEntradas = (entradas.first['total'] as num?)?.toDouble() ?? 0.0;
+    final totalSaidas = (saidas.first['total'] as num?)?.toDouble() ?? 0.0;
+
+    return totalEntradas - totalSaidas;
   }
 }

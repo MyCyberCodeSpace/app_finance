@@ -100,6 +100,20 @@ class InitialDatabase {
         ''');
 
         await db.execute('''
+        CREATE TABLE finance_target_movements (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          target_id INTEGER NOT NULL,
+          type TEXT NOT NULL,
+          value REAL NOT NULL,
+          description TEXT,
+          date TEXT NOT NULL,
+          created_at TEXT NOT NULL,
+          updated_at TEXT,
+          FOREIGN KEY (target_id) REFERENCES finance_target (id)
+        )
+        ''');
+
+        await db.execute('''
         CREATE TABLE finance_target (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           label TEXT NOT NULL,
