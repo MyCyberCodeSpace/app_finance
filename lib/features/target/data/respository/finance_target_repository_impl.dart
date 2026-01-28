@@ -1,6 +1,6 @@
 import 'package:finance_control/core/data/datasource/database/initial_database.dart';
-import 'package:finance_control/core/domain/repositories/finance_target_repository.dart';
-import 'package:finance_control/core/model/finance_target_model.dart';
+import 'package:finance_control/features/target/domain/repository/finance_target_repository.dart';
+import 'package:finance_control/features/target/domain/model/finance_target_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class FinanceTargetRepositoryImpl implements FinanceTargetRepository {

@@ -1,4 +1,4 @@
-import 'package:finance_control/core/model/finance_target_model.dart';
+import 'package:finance_control/features/target/domain/model/finance_target_model.dart';
 import 'package:finance_control/core/theme/app_colors.dart';
 import 'package:finance_control/features/target/presentation/bloc/finance_target_bloc.dart';
 import 'package:finance_control/features/target/presentation/bloc/finance_target_bloc_event.dart';

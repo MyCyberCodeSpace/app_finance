@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:finance_control/core/domain/repositories/finance_target_repository.dart';
+import 'package:finance_control/features/target/domain/repository/finance_target_repository.dart';
 import 'finance_target_bloc_event.dart';
 import 'finance_target_bloc_state.dart';
 

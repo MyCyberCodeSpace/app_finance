@@ -1,4 +1,4 @@
-import 'package:finance_control/core/model/finance_target_model.dart';
+import 'package:finance_control/features/target/domain/model/finance_target_model.dart';
 
 final initialFinanceTarget = [
   FinanceTargetModel(
