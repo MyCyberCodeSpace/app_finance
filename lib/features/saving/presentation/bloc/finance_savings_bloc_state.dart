@@ -1,4 +1,4 @@
-import 'package:finance_control/core/model/finance_savings_model.dart';
+import 'package:finance_control/features/saving/domain/model/finance_savings_model.dart';
 
 abstract class FinanceSavingsBlocState {
   const FinanceSavingsBlocState();

@@ -1,6 +1,6 @@
-import 'package:finance_control/core/domain/repositories/finance_savings_repository.dart';
-import 'package:finance_control/core/model/finance_saving_movement_model.dart';
-import 'package:finance_control/core/model/finance_savings_model.dart';
+import 'package:finance_control/features/saving/domain/repository/finance_savings_repository.dart';
+import 'package:finance_control/features/saving/domain/model/finance_saving_movement_model.dart';
+import 'package:finance_control/features/saving/domain/model/finance_savings_model.dart';
 import 'package:flutter/material.dart';
 
 class FinanceSavingFormController {

@@ -1,5 +1,5 @@
 import 'package:finance_control/core/data/datasource/database/initial_dataset_finance_record.dart';
-import 'package:finance_control/core/data/datasource/database/initial_dataset_finance_savings.dart';
+import 'package:finance_control/features/saving/data/database/initial_dataset_finance_savings.dart';
 import 'package:finance_control/core/data/datasource/database/initial_dataset_finance_target.dart';
 import 'package:finance_control/core/data/datasource/database/initial_dataset_finance_types.dart';
 import 'package:finance_control/core/data/datasource/database/initial_dataset_payment_types.dart';

@@ -2,13 +2,13 @@ import 'package:finance_control/core/data/datasource/database/initial_database.d
 import 'package:finance_control/core/data/datasource/preferences/user_preferences_datasource.dart';
 import 'package:finance_control/core/data/repositories/finance_payment_repository_impl.dart';
 import 'package:finance_control/core/data/repositories/finance_record_repository_impl.dart';
-import 'package:finance_control/core/data/repositories/finance_savings_repository_impl.dart';
+import 'package:finance_control/features/saving/data/repository/finance_savings_repository_impl.dart';
 import 'package:finance_control/core/data/repositories/finance_status_repository_impl.dart';
 import 'package:finance_control/core/data/repositories/finance_target_repository_impl.dart';
 import 'package:finance_control/core/data/repositories/finance_type_repository_impl.dart';
 import 'package:finance_control/core/domain/repositories/finance_payment_repository.dart';
 import 'package:finance_control/core/domain/repositories/finance_record_repository.dart';
-import 'package:finance_control/core/domain/repositories/finance_savings_repository.dart';
+import 'package:finance_control/features/saving/domain/repository/finance_savings_repository.dart';
 import 'package:finance_control/core/domain/repositories/finance_status_repository.dart';
 import 'package:finance_control/core/domain/repositories/finance_target_repository.dart';
 import 'package:finance_control/core/domain/repositories/finance_type_repository.dart';

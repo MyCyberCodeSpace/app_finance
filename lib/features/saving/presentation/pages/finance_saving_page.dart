@@ -1,4 +1,4 @@
-import 'package:finance_control/core/model/finance_savings_model.dart';
+import 'package:finance_control/features/saving/domain/model/finance_savings_model.dart';
 import 'package:finance_control/core/presentation/widgets/confirm_delete_dialog.dart';
 import 'package:finance_control/core/presentation/widgets/custom_scarfold.dart';
 import 'package:finance_control/core/presentation/widgets/edit_delete_popup_menu.dart';

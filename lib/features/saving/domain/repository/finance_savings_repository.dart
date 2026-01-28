@@ -1,5 +1,5 @@
-import 'package:finance_control/core/model/finance_savings_model.dart';
-import 'package:finance_control/core/model/finance_saving_movement_model.dart';
+import 'package:finance_control/features/saving/domain/model/finance_savings_model.dart';
+import 'package:finance_control/features/saving/domain/model/finance_saving_movement_model.dart';
 
 abstract class FinanceSavingsRepository {
   Future<List<FinanceSavingsModel>> getAll();

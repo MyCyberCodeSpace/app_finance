@@ -1,4 +1,4 @@
-import 'package:finance_control/core/model/finance_savings_model.dart';
+import 'package:finance_control/features/saving/domain/model/finance_savings_model.dart';
 import 'package:finance_control/core/presentation/widgets/adjust_balance_dialog_widget.dart';
 import 'package:finance_control/core/theme/app_colors.dart';
 import 'package:finance_control/features/saving/presentation/bloc/finance_savings_bloc.dart';
