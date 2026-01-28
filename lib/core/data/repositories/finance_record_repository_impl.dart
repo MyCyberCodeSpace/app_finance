@@ -119,7 +119,6 @@ class FinanceRecordRepositoryImpl implements FinanceRecordRepository {
         : -model.value;
 
     await db.insert('finance_records', model.toMap());
-    if (model.isRecurring) return;
     await _updateBalance(impact);
   }
 
@@ -137,8 +136,6 @@ class FinanceRecordRepositoryImpl implements FinanceRecordRepository {
     if (old.isEmpty) return;
 
     final oldModel = FinanceRecordModel.fromMap(old.first);
-
-    if (oldModel.isRecurring || model.isRecurring) return;
 
     final oldType = await financeTypeRepository.getById(
       oldModel.typeId,
@@ -196,8 +193,6 @@ class FinanceRecordRepositoryImpl implements FinanceRecordRepository {
       where: 'id = ?',
       whereArgs: [id],
     );
-    if (model.isRecurring) return;
-
     await _updateBalance(-impact);
   }
 }

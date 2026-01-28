@@ -70,6 +70,15 @@ class AppDrawer extends StatelessWidget {
               children: [
                 _buildMenuItem(
                   context: context,
+                  icon: Icons.repeat_rounded,
+                  title: 'Despesas/Receitas Recorrentes',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Modular.to.pushNamed('/recurrence/');
+                  },
+                ),
+                _buildMenuItem(
+                  context: context,
                   icon: Icons.info_outline_rounded,
                   title: 'Sobre o aplicativo',
                   onTap: () {

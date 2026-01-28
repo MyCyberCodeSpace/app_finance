@@ -41,8 +41,6 @@ class FinanceRecordTile extends StatelessWidget {
   }
 
   Color _valueColor() {
-    if (record.isRecurring) return AppColors.gray;
-
     switch (type.financeCategory) {
       case FinanceCategory.income:
         return AppColors.positiveBalance;
@@ -123,8 +121,6 @@ class FinanceRecordTile extends StatelessWidget {
                   label: type.financeCategory.label,
                   color: _categoryColor(),
                 ),
-                if (record.isRecurring)
-                  _Tag(label: 'Recorrente', color: AppColors.gray.shade600),
               ],
             ),
 

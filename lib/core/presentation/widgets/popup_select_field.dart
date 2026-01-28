@@ -32,7 +32,10 @@ class PopupSelectField<T> extends StatelessWidget {
   });
 
   PopupSelectOption<T> get _selectedOption {
-    return options.firstWhere((option) => option.value == selectedValue);
+    return options.firstWhere(
+      (option) => option.value == selectedValue,
+      orElse: () => options.first,
+    );
   }
 
   @override

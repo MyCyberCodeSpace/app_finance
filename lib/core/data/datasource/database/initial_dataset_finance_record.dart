@@ -17,7 +17,6 @@ final List<FinanceRecordModel> initialDataset = [
     typeId: 2,
     description: 'Almoço no trabalho',
     paymentId: 3,
-    isRecurring: false,
   ),
 
   FinanceRecordModel(
@@ -27,7 +26,6 @@ final List<FinanceRecordModel> initialDataset = [
     typeId: 3,
     description: 'Aluguel do apartamento',
     paymentId: 4,
-    isRecurring: false,
   ),
 
   FinanceRecordModel(
@@ -37,7 +35,6 @@ final List<FinanceRecordModel> initialDataset = [
     typeId: 4,
     description: 'Impostos da empresa (DAS)',
     paymentId: 4,
-    isRecurring: false,
   ),
 
   FinanceRecordModel(
@@ -47,7 +44,6 @@ final List<FinanceRecordModel> initialDataset = [
     typeId: 5,
     description: 'Projeto mobile - Hotfix',
     paymentId: 5,
-    isRecurring: false,
   ),
 
   FinanceRecordModel(
@@ -57,7 +53,6 @@ final List<FinanceRecordModel> initialDataset = [
     typeId: 2,
     description: 'Mercado da semana',
     paymentId: 1,
-    isRecurring: false,
   ),
 
   FinanceRecordModel(
@@ -67,20 +62,15 @@ final List<FinanceRecordModel> initialDataset = [
     typeId: 2,
     description: 'Jantar fim de semana',
     paymentId: 1,
-    isRecurring: false,
   ),
 
   FinanceRecordModel(
     id: 8,
     date: DateTime(2026, 1, 20),
-    totalInstallments: 10,
-    dueDay: 10,
     value: 122.00,
     typeId: 6,
-    statusId: 1,
     description: 'Compra do crédito',
     paymentId: 2,
-    isRecurring: true,
   ),
 
   FinanceRecordModel(
@@ -90,6 +80,5 @@ final List<FinanceRecordModel> initialDataset = [
     typeId: 7,
     description: 'Aporte em FII (HGLG11)',
     paymentId: 1,
-    isRecurring: false,
   ),
 ];

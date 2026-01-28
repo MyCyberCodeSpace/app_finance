@@ -27,6 +27,12 @@ import 'package:finance_control/features/saving/saving_module.dart';
 import 'package:finance_control/features/target/presentation/bloc/finance_target_bloc.dart';
 import 'package:finance_control/features/target/target_module.dart';
 import 'package:finance_control/features/type/type_module.dart';
+import 'package:finance_control/features/recurrence/recurrence_module.dart';
+import 'package:finance_control/features/recurrence/domain/repository/finance_recurrence_repository.dart';
+import 'package:finance_control/features/recurrence/domain/repository/finance_recurrence_movement_repository.dart';
+import 'package:finance_control/features/recurrence/data/repository/finance_recurrence_repository_impl.dart';
+import 'package:finance_control/features/recurrence/data/repository/finance_recurrence_movement_repository_impl.dart';
+import 'package:finance_control/features/recurrence/presentation/bloc/finance_recurrence_bloc.dart';
 import 'package:finance_control/features/about/presentation/page/about_page.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
@@ -55,12 +61,20 @@ class AppModule extends Module {
     i.addLazySingleton<FinanceTargetRepository>(
       () => FinanceTargetRepositoryImpl(i()),
     );
+    i.addLazySingleton<FinanceRecurrenceRepository>(
+      () => FinanceRecurrenceRepositoryImpl(i()),
+    );
+    i.addLazySingleton<FinanceRecurrenceMovementRepository>(
+      () => FinanceRecurrenceMovementRepositoryImpl(i()),
+    );
+
     i.addLazySingleton(FinanceSavingsBloc.new);
     i.addLazySingleton(FinancePaymentBloc.new);
     i.addLazySingleton(FinanceRecordBloc.new);
     i.addLazySingleton(FinanceTypeBloc.new);
     i.addLazySingleton(FinanceStatusBloc.new);
     i.addLazySingleton(FinanceTargetBloc.new);
+    i.addLazySingleton(FinanceRecurrenceBloc.new);
     i.addLazySingleton(FinanceRecordController.new);
     i.addLazySingleton(FinanceTypeController.new);
     i.addLazySingleton(DashboardController.new);
@@ -73,6 +87,7 @@ class AppModule extends Module {
     r.module('/type', module: TypeModule());
     r.module('/saving', module: SavingModule());
     r.module('/target', module: TargetModule());
+    r.module('/recurrence', module: RecurrenceModule());
     r.child('/about', child: (context) => const AboutPage());
   }
 }

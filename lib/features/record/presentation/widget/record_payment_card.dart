@@ -101,6 +101,14 @@ class RecordPaymentCard extends StatelessWidget {
                   );
                 }
 
+                // Update payment ID if it's 0 (not set)
+                if (paymentId.value == 0 && state.listPayment.isNotEmpty) {
+                  Future.microtask(() {
+                    paymentId.value = state.listPayment.first.id!;
+                    onPaymentChanged(state.listPayment.first.id!);
+                  });
+                }
+
                 return PopupSelectField<int>(
                   selectedValue: paymentId.value,
                   options: state.listPayment.map((payment) {

@@ -4,6 +4,8 @@ import 'package:finance_control/core/data/datasource/database/initial_dataset_fi
 import 'package:finance_control/core/data/datasource/database/initial_dataset_finance_types.dart';
 import 'package:finance_control/core/data/datasource/database/initial_dataset_payment_types.dart';
 import 'package:finance_control/core/data/datasource/database/initial_dataset_status_types.dart';
+import 'package:finance_control/features/recurrence/data/database/initial_dataset_finance_recurrence.dart';
+import 'package:finance_control/features/recurrence/data/database/initial_dataset_finance_recurrence_movements.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as p;
 
@@ -46,14 +48,11 @@ class InitialDatabase {
         CREATE TABLE finance_records (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           date TEXT NOT NULL,
-          due_day INTEGER,
           value REAL NOT NULL,
           type_id INTEGER NOT NULL,
           status_id INTEGER,
           payment_id INTEGER,
           description TEXT,
-          is_recurring INTEGER NOT NULL,
-          total_installments INTEGER,
           created_at TEXT NOT NULL,
           updated_at TEXT,
           is_deleted INTEGER NOT NULL,
@@ -113,6 +112,38 @@ class InitialDatabase {
           updated_at TEXT
         )
         ''');
+
+        await db.execute('''
+        CREATE TABLE finance_recurrence (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          label TEXT NOT NULL,
+          value REAL NOT NULL,
+          payment_id INTEGER NOT NULL,
+          recurrence_type TEXT NOT NULL,
+          due_day INTEGER,
+          start_date TEXT NOT NULL,
+          end_date TEXT,
+          description TEXT,
+          is_active INTEGER NOT NULL,
+          finance_category TEXT NOT NULL,
+          created_at TEXT NOT NULL,
+          updated_at TEXT,
+          FOREIGN KEY (payment_id) REFERENCES finance_payment (id)
+        )
+        ''');
+
+        await db.execute('''
+        CREATE TABLE finance_recurrence_movements (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          recurrence_id INTEGER NOT NULL,
+          value REAL NOT NULL,
+          description TEXT,
+          execution_date TEXT NOT NULL,
+          created_at TEXT NOT NULL,
+          updated_at TEXT,
+          FOREIGN KEY (recurrence_id) REFERENCES finance_recurrence (id)
+        )
+        ''');
         
         for (final payment in initialFinancePaymentTypes) {
           await db.insert('finance_payment', payment.toMap());
@@ -136,6 +167,14 @@ class InitialDatabase {
 
         for (final target in initialFinanceTarget) {
           await db.insert('finance_target', target.toMap());
+        }
+
+        for (final recurrence in initialDatasetFinanceRecurrence) {
+          await db.insert('finance_recurrence', recurrence.toMap());
+        }
+
+        for (final movement in initialDatasetFinanceRecurrenceMovements) {
+          await db.insert('finance_recurrence_movements', movement.toMap());
         }
 
         await db.insert('finance_balance', {

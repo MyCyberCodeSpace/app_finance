@@ -9,7 +9,6 @@ import 'package:finance_control/core/theme/app_colors.dart';
 import 'package:finance_control/features/record/presentation/widget/record_description_card.dart';
 import 'package:finance_control/features/record/presentation/widget/record_header_card.dart';
 import 'package:finance_control/features/record/presentation/widget/record_payment_card.dart';
-import 'package:finance_control/features/record/presentation/widget/record_recurring_card.dart';
 import 'package:finance_control/features/record/presentation/widget/record_type_card.dart';
 import 'package:finance_control/features/record/presentation/widget/record_value_date_card.dart';
 import 'package:flutter/material.dart';
@@ -28,26 +27,19 @@ class RecordFormPage extends StatefulWidget {
 class _RecordFormPageState extends State<RecordFormPage> {
   final _formKey = GlobalKey<FormState>();
   late DateTime _date;
-  late int? _dueDay;
   int? _typeId;
-  late bool _isRecurring;
   late final FinanceRecordBloc financeRecordBloc;
   late final FinanceTypeBloc financeTypeBloc;
   late final FinancePaymentBloc financePaymentBloc;
   late final TextEditingController _selectedDateTEC;
-  late final TextEditingController _dueDayTEC;
   late final TextEditingController _valueTEC;
   late final TextEditingController _descriptionTEC;
-  late final TextEditingController _totalInstallmentsTEC;
-  late final ValueNotifier<int> statusId;
   late final ValueNotifier<int> paymentId;
 
   @override
   void initState() {
     super.initState();
-    statusId = ValueNotifier(0);
     paymentId = ValueNotifier(0);
-
     financeRecordBloc = Modular.get<FinanceRecordBloc>();
     financeTypeBloc = Modular.get<FinanceTypeBloc>();
     financeTypeBloc.add(LoadFinanceTypesEvent());
@@ -62,12 +54,6 @@ class _RecordFormPageState extends State<RecordFormPage> {
       text: DateFormat('dd/MM/yyyy').format(_date),
     );
 
-    _dueDay = r?.dueDay;
-
-    _dueDayTEC = TextEditingController(
-      text: _dueDay != null ? _dueDay.toString() : '',
-    );
-
     _valueTEC = TextEditingController(
       text: r?.value != null ? r!.value.toString() : '',
     );
@@ -75,15 +61,14 @@ class _RecordFormPageState extends State<RecordFormPage> {
     _descriptionTEC = TextEditingController(
       text: r?.description ?? '',
     );
-
-    statusId.value = widget.record?.statusId ?? 1;
-
+  
     _typeId = r?.typeId;
-    paymentId.value = r?.paymentId ?? 1;
-    _isRecurring = r?.isRecurring ?? false;
-    _totalInstallmentsTEC = TextEditingController(
-      text: r?.totalInstallments?.toString() ?? '',
-    );
+    
+    // Set initial payment ID from record or will be set when payments load
+    if (r?.paymentId != null) {
+      paymentId.value = r!.paymentId;
+    }
+
   }
 
   void _submit() {
@@ -107,13 +92,6 @@ class _RecordFormPageState extends State<RecordFormPage> {
       description: _descriptionTEC.text.isEmpty
           ? null
           : _descriptionTEC.text,
-      isRecurring: _isRecurring,
-      dueDay: _isRecurring ? _dueDay : null,
-      totalInstallments: _isRecurring
-          ? int.tryParse(_totalInstallmentsTEC.text)
-          : null,
-
-      statusId: _isRecurring ? statusId.value : null,
       createdAt: widget.record?.createdAt,
       updatedAt: widget.record != null ? DateTime.now() : null,
     );
@@ -174,23 +152,6 @@ class _RecordFormPageState extends State<RecordFormPage> {
                 onPaymentChanged: (id) => setState(() => paymentId.value = id),
               ),
               const SizedBox(height: 16),
-              RecordRecurringCard(
-                isRecurring: _isRecurring,
-                onRecurringChanged: (v) {
-                  setState(() {
-                    _isRecurring = v;
-                    if (!v) {
-                      _dueDayTEC.clear();
-                      _totalInstallmentsTEC.clear();
-                    }
-                  });
-                },
-                dueDayController: _dueDayTEC,
-                totalInstallmentsController: _totalInstallmentsTEC,
-                onDueDayChanged: (day) => _dueDay = day,
-                statusId: statusId,
-                isEditMode: widget.record != null,
-              ),
               SizedBox(height: MediaQuery.sizeOf(context).height * 0.2),
               ElevatedButton(
                 onPressed: _submit,

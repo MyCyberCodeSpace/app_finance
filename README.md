@@ -31,9 +31,7 @@ Stores all financial transactions.
 | `type_id`           | INTEGER    | Type reference (FK)                          |
 | `description`       | TEXT       | Optional description                         |
 | `payment_id`        | INTEGER    | Payment method (FK)                          |
-| `is_recurring`      | INTEGER    | If it's a recurring expense (0/1)            |
 | `due_day`           | INTEGER    | Due day (if recurring)                       |
-| `total_installments`| INTEGER    | Total installments (if installment)          |
 | `status_id`         | INTEGER    | Installment status (FK)                      |
 | `created_at`        | TEXT       | Creation date                                |
 | `updated_at`        | TEXT       | Last update date                             |
